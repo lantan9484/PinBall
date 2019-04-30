@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 
 public class FripperController : MonoBehaviour {
-	//HingeJlintコンポーネント
+	//HingeJointコンポーネントを入れる
 	private HingeJoint myHingeJoint;
 
 	//初期の傾き
 	private float defaultAngle = 20;
-	//弾いたときの傾き
+	//弾いた時の傾き
 	private float flickAngle = -20;
 
 	// Use this for initialization
@@ -19,29 +19,37 @@ public class FripperController : MonoBehaviour {
 		//フリッパーの傾きを設定
 		SetAngle(this.defaultAngle);
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		//左矢印キーを押した時左フリッパーを動かす
-		if (Input.GetKeyDown (KeyCode.LeftArrow) && tag == "LeftFripperTag") {
-			SetAngle (this.flickAngle);
-		}
-		//右矢印キーを押した時
-		if (Input.GetKeyDown (KeyCode.RightArrow) && tag == "RightFripperTag") {
-			SetAngle (this.flickAngle);
-		}
+		foreach (Touch t in Input.touches) {
 
-		//矢印キー離されたときフリッパーを元に戻す
-		if (Input.GetKeyUp (KeyCode.LeftArrow) && tag == "LeftFripperTag") {
-			SetAngle (this.defaultAngle);
-		}
-		if (Input.GetKeyUp (KeyCode.RightArrow) && tag == "RightFripperTag") {
-			SetAngle (this.defaultAngle);
+			if (t.phase == TouchPhase.Began || t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) {
+				//画面の左半分をタッチした時左フリッパーを動かす
+				if (t.position.x < Screen.width * 0.5 && tag == "LeftFripperTag") {
+					SetAngle (this.flickAngle);
+				}
+				//画面の右半分をタッチした時右フリッパーを動かす
+				if (t.position.x >= Screen.width * 0.5 && tag == "RightFripperTag") {
+					SetAngle (this.flickAngle);
+				}
+			}
+			//指が離された時フリッパーを元に戻す
+			if (t.phase == TouchPhase.Ended) {
+				if (t.position.x < Screen.width * 0.5 && tag == "LeftFripperTag") {
+					SetAngle (this.defaultAngle);
+				}
+				if (t.position.x >= Screen.width * 0.5 && tag == "RightFripperTag") {
+					SetAngle (this.defaultAngle);
+				}
+			}
+			
 		}
 	}
 
+
 	//フリッパーの傾きを設定
-	public void SetAngle(float angle){
+	public void SetAngle (float angle){
 		JointSpring jointSpr = this.myHingeJoint.spring;
 		jointSpr.targetPosition = angle;
 		this.myHingeJoint.spring = jointSpr;

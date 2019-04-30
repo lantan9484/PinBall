@@ -27,13 +27,13 @@ public class ScoreManager : MonoBehaviour {
 		} else if (ScoreTag == "LargeCloudTag") {
 			score += 100;
 		} 
-
+		this.scoreText.GetComponent<Text> ().text = "score:" + score;
 	}
 		
 	// Update is called once per frame
 	void Update () {
 		//Debug.Log ("点数" + score);
-		this.scoreText.GetComponent<Text> ().text = "score:" + score;
-	}
 
+	}
+	// void addscoreをつくってもよいかも
 }
